@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+
+
+/* ─── Custom Base Styles ─────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-brand-cream text-brand-dark font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+/* ─── Custom Utilities ───────────────────────────────────────── */
+@layer utilities {
+  .center {
+    @apply flex items-center justify-center;
+  }
+
+  .input-base {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-rose transition;
+  }
+
+  .btn-primary {
+    @apply bg-brand-rose text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply border border-brand-rose text-brand-rose px-6 py-2 rounded-lg font-semibold hover:bg-brand-rose hover:text-white transition;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-md p-6;
+  }
+}
