@@ -1,5 +1,6 @@
 require('dotenv').config();
 const app = require('./app');
+const pool = require('./src/config/db'); // ඩේටාබේස් එක සර්වර් එකට සම්බන්ධ කරන පේළිය
 
 const PORT = process.env.PORT || 5000;
 

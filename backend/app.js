@@ -19,6 +19,11 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Indiwari Cake API is running' });
 });
 
+// ─── TEST ROUTE ────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({ message: "Welcome to Indiwari Cake API!" });
+});
+
 // ─── ROUTES ────────────────────────────────────────────────────
 // Uncomment each route as you build the corresponding module:
 // const authRoutes    = require('./src/routes/authRoutes');
@@ -37,7 +42,7 @@ app.get('/api/health', (req, res) => {
 // app.use('/api/qr',        qrRoutes);
 // app.use('/api/reports',   reportRoutes);
 
-// ─── 404 HANDLER ──────────────────────────────────────────────
+// ─── 404 HANDLER (හැමවිටම ROUTES වලට පහළින්ම තිබිය යුතුයි) ───────
 app.use((req, res) => {
   res.status(404).json({ message: `Route ${req.originalUrl} not found` });
 });
@@ -49,11 +54,6 @@ app.use((err, req, res, next) => {
     message: err.message || 'Internal Server Error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
-});
-
-// Test Route
-app.get('/', (req, res) => {
-    res.json({ message: "Welcome to Indiwari Cake API!" });
 });
 
 module.exports = app;
