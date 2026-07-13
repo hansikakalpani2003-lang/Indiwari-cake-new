@@ -4,7 +4,6 @@
  * Static content, no API calls.
  */
 
-import React from 'react';
 
 const STEPS = [
   { number: 1, icon: '🔍', title: 'Browse',    description: 'Explore our full range of cakes by category.' },

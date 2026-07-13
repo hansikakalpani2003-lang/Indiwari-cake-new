@@ -4,8 +4,6 @@
  * "Browse Menu"  → always /menu (menu is publicly viewable)
  * "Order Now"    → /menu if already logged in, otherwise /register
  */
-
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,39 +11,49 @@ const HeroSection = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <section className="bg-gradient-to-br from-pink-50 via-pink-100 to-pink-50">
-      <div className="max-w-6xl mx-auto px-4 py-20 md:py-28 flex flex-col items-center text-center">
+    <section className="relative h-[85vh] min-h-[560px] w-full overflow-hidden">
 
-        <span className="text-6xl md:text-7xl mb-6" aria-hidden="true">🎂</span>
+      {/* Full-bleed background image */}
+      <img
+        src="https://img.magnific.com/free-photo/delicious-cake-arrangement-top-view_23-2148933607.jpg?semt=ais_hybrid&w=740&q=80"
+        alt="Indiwari Cake"
+        className="absolute inset-0 w-full h-full object-cover object-center"
+      />
 
-        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 leading-tight">
-          Indiwari Cake
-        </h1>
+      {/* Soft dark overlay so the card and edges read clearly */}
+      <div className="absolute inset-0 bg-black/10"></div>
 
-        <p className="mt-4 text-lg md:text-xl text-pink-700 font-semibold">
-          Handcrafted Cakes, Delivered to Your Door
-        </p>
+      {/* Centered overlay card */}
+      <div className="relative z-10 h-full flex items-center justify-center px-4">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl px-8 py-10 md:px-14 md:py-12 max-w-lg text-center">
 
-        <p className="mt-3 max-w-xl text-gray-500 text-sm md:text-base">
-          Customise your cake online, track every step from kitchen to doorstep,
-          and verify your order instantly with a unique QR code on delivery.
-        </p>
+          <p className="text-pink-500 text-xs font-semibold tracking-widest uppercase mb-3">
+            Freshly Baked Delicious
+          </p>
 
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/menu"
-            className="bg-pink-600 hover:bg-pink-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition-colors"
-          >
-            Browse Menu
-          </Link>
-          <Link
-            to={isAuthenticated ? '/menu' : '/register'}
-            className="border-2 border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white font-bold px-8 py-3 rounded-xl transition-colors"
-          >
-            Order Now
-          </Link>
+          <h1 className="font-serif italic text-3xl md:text-4xl font-bold text-gray-800 leading-snug mb-6">
+            Making your celebration <br className="hidden sm:block" />
+            sweeter, one slice at a time
+          </h1>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/menu"
+              className="bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold tracking-wide px-7 py-3 rounded-lg shadow-md hover:shadow-lg transition-all"
+            >
+              BROWSE MENU
+            </Link>
+            <Link
+              to={isAuthenticated ? '/menu' : '/register'}
+              className="border-2 border-pink-600 text-pink-600 hover:bg-pink-600 hover:text-white text-sm font-bold tracking-wide px-7 py-3 rounded-lg transition-colors"
+            >
+              ORDER NOW
+            </Link>
+          </div>
+
         </div>
       </div>
+
     </section>
   );
 };

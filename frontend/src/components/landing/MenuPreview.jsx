@@ -6,7 +6,7 @@
  * - Does NOT use CartContext — this is a preview only, not orderable from here
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -30,7 +30,7 @@ const MenuPreview = () => {
         if (!cancelled) {
           setItems((res.data.items || []).slice(0, PREVIEW_LIMIT));
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) setError('Could not load the menu right now.');
       } finally {
         if (!cancelled) setLoading(false);
@@ -82,7 +82,7 @@ const MenuPreview = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-4xl">🎂</span>
+                      <span className="text-4xl"></span>
                     </div>
                   )}
                 </div>

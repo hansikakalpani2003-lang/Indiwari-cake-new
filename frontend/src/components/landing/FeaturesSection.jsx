@@ -3,7 +3,6 @@
  * Three feature highlight cards — static content, no API calls.
  */
 
-import React from 'react';
 
 const FEATURES = [
   {

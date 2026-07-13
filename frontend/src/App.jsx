@@ -1,49 +1,60 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// ─── Placeholder pages (create simple components for now) ─────
-// These will be replaced with real implementations in later modules.
-const ComingSoon = ({ page }) => (
-  <div className="min-h-screen center flex-col gap-4">
-    <h1 className="text-3xl font-display text-brand-rose">Indiwari Cake 🎂</h1>
-    <p className="text-gray-500">{page} — coming soon</p>
-  </div>
-);
+// Context Providers
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
-// ─── When real pages are ready, import them like this: ─────────
-// import LandingPage        from './pages/LandingPage';
-// import LoginPage          from './pages/LoginPage';
-// import RegisterPage       from './pages/RegisterPage';
-// import CustomerDashboard  from './pages/CustomerDashboard';
-// import AdminDashboard     from './pages/AdminDashboard';
-// import ProtectedRoute     from './components/common/ProtectedRoute';
-// import AdminRoute         from './components/common/AdminRoute';
+// Route guards
+import ProtectedRoute from './components/common/ProtectedRoute';
+import AdminRoute     from './components/common/AdminRoute';
 
-function App() {
+// Public pages
+import LandingPage      from './pages/LandingPage';
+import LoginPage        from './pages/LoginPage';
+import RegisterPage     from './pages/RegisterPage';
+import PublicOrderPage  from './pages/PublicOrderPage';
+import MenuPage         from './pages/MenuPage';
+
+// Customer pages
+import CustomerDashboard from './pages/CustomerDashboard';
+import CheckoutPage      from './pages/CheckoutPage';
+import OrderDetailPage   from './pages/OrderDetailPage';
+
+// Admin pages
+import AdminDashboard    from './pages/AdminDashboard';       
+import AdminOrdersPage   from './pages/AdminOrdersPage';
+import AdminMenuPage     from './pages/AdminMenuPage';
+import AdminCustomersPage from './pages/AdminCustomersPage';
+import AdminReportsPage  from './pages/AdminReportsPage';     
+
+export default function App() {
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/"          element={<ComingSoon page="Landing Page" />} />
-      <Route path="/login"     element={<ComingSoon page="Login" />} />
-      <Route path="/register"  element={<ComingSoon page="Register" />} />
-      <Route path="/menu"      element={<ComingSoon page="Menu" />} />
-      <Route path="/order/:token" element={<ComingSoon page="Public Order Page" />} />
+    <AuthProvider>
+      <CartProvider>
+        <Routes>
+          {/* ── Public Routes ── */}
+          <Route path="/"            element={<LandingPage />} />
+          <Route path="/login"       element={<LoginPage />} />
+          <Route path="/register"    element={<RegisterPage />} />
+          <Route path="/menu"        element={<MenuPage />} />
+          <Route path="/order/:token" element={<PublicOrderPage />} />
 
-      {/* Customer protected routes */}
-      <Route path="/dashboard"       element={<ComingSoon page="Customer Dashboard" />} />
-      <Route path="/checkout"        element={<ComingSoon page="Checkout" />} />
-      <Route path="/orders/:id"      element={<ComingSoon page="Order Detail" />} />
+          {/* ── Customer Routes (Protected) ── */}
+          <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboard /></ProtectedRoute>} />
+          <Route path="/checkout"  element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+          <Route path="/orders/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
 
-      {/* Admin protected routes */}
-      <Route path="/admin"           element={<ComingSoon page="Admin Dashboard" />} />
-      <Route path="/admin/orders"    element={<ComingSoon page="Admin Orders" />} />
-      <Route path="/admin/menu"      element={<ComingSoon page="Admin Menu" />} />
-      <Route path="/admin/customers" element={<ComingSoon page="Admin Customers" />} />
-      <Route path="/admin/reports"   element={<ComingSoon page="Admin Reports" />} />
+          {/* ── Admin Routes (Protected) ── */}
+          <Route path="/admin"           element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/orders"    element={<AdminRoute><AdminOrdersPage /></AdminRoute>} />
+          <Route path="/admin/menu"      element={<AdminRoute><AdminMenuPage /></AdminRoute>} />
+          <Route path="/admin/customers" element={<AdminRoute><AdminCustomersPage /></AdminRoute>} />
+          <Route path="/admin/reports"   element={<AdminRoute><AdminReportsPage /></AdminRoute>} />
 
-      {/* Catch all — 404 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+          {/* ── Fallback Route ── */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </CartProvider>
+    </AuthProvider>
   );
 }
-
-export default App;

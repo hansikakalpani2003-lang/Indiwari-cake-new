@@ -1,10 +1,3 @@
-/**
- * ORDER STATUS LIFECYCLE
- *
- * Pending → Confirmed → Being Prepared → Out for Delivery → Delivered
- *
- * A status can only move FORWARD — no backward transitions allowed.
- */
 
 const STATUS_ORDER = [
   'Pending',
@@ -15,9 +8,7 @@ const STATUS_ORDER = [
 ];
 
 /**
- * isValidTransition
- * Returns true if moving from currentStatus to newStatus is allowed.
- * Only forward (or same-level) transitions are valid.
+ 
  *
  * @param {string} currentStatus
  * @param {string} newStatus
@@ -33,9 +24,7 @@ const isValidTransition = (currentStatus, newStatus) => {
 };
 
 /**
- * getNextStatus
- * Returns the next status in the lifecycle after the given one.
- * Returns null if already at the final status.
+ 
  *
  * @param {string} currentStatus
  * @returns {string|null}

@@ -11,7 +11,7 @@
  *   Logged in (admin)    → Admin, Logout
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -42,10 +42,10 @@ const Navbar = () => {
           {/* Logo */}
           <Link
             to="/"
-            className="text-xl font-extrabold text-pink-700 tracking-tight flex items-center gap-1"
+            className="font-serif text-xl font-bold text-pink-700 tracking-tight flex items-center gap-1"
             onClick={closeMobile}
           >
-            🎂 Indiwari Cake
+             Indiwari Cake
           </Link>
 
           {/* Desktop nav */}

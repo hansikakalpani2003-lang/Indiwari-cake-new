@@ -12,7 +12,6 @@
  *                                  pass null to hide it
  */
 
-import React from 'react';
 
 const SIZE_CLASSES = {
   sm: 'h-5 w-5 border-2',

@@ -6,7 +6,6 @@
  * across the website and their order notification emails.
  */
 
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -18,7 +17,7 @@ const Footer = () => {
 
         {/* Business info */}
         <div>
-          <h3 className="text-white text-lg font-extrabold mb-2">🎂 Indiwari Cake</h3>
+          <h3 className="text-white text-lg font-extrabold mb-2">Indiwari Cake</h3>
           <p className="text-sm text-gray-400">
             Handcrafted cakes for every occasion — ordered online, tracked with
             a single QR code, delivered to your door.

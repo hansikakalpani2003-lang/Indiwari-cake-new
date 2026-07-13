@@ -1,0 +1,811 @@
+{
+  "info": {
+    "name": "IndiwariCake API",
+    "description": "Full API test collection for Indiwari Cake — QR Based Cake Order Management System.\nDeveloper: R.M.H.K. Bandaranayake (KUR/IT/2324/F/0029)\nSLIATE — ATI Kurunegala | IT4052 ICT Project | Batch 2324(FT)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000" }
+  ],
+  "item": [
+
+    {
+      "name": "Auth",
+      "item": [
+
+        {
+          "name": "Register — Valid Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has token', () => pm.expect(body.token).to.be.a('string'));",
+                  "pm.test('Has user object', () => pm.expect(body.user).to.be.an('object'));",
+                  "pm.test('Role is customer', () => pm.expect(body.user.role).to.eql('customer'));",
+                  "pm.environment.set('customer_token', body.token);",
+                  "pm.environment.set('test_customer_id', body.user.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Customer M12\",\n  \"email\": \"testm12@indiwari.lk\",\n  \"password\": \"Test@1234\",\n  \"phone\": \"0771234567\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "Register — Duplicate Email (expect 409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 409', () => pm.response.to.have.status(409));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has error message', () => pm.expect(body.message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Customer M12\",\n  \"email\": \"testm12@indiwari.lk\",\n  \"password\": \"Test@1234\",\n  \"phone\": \"0771234567\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "Login — Wrong Password (expect 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has error message', () => pm.expect(body.message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testm12@indiwari.lk\",\n  \"password\": \"WrongPassword\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "Login — Valid Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has token', () => pm.expect(body.token).to.be.a('string'));",
+                  "pm.environment.set('customer_token', body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testm12@indiwari.lk\",\n  \"password\": \"Test@1234\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "Login — Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has token', () => pm.expect(body.token).to.be.a('string'));",
+                  "pm.test('Role is admin', () => pm.expect(body.user.role).to.eql('admin'));",
+                  "pm.environment.set('admin_token', body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/api/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@indiwari.lk\",\n  \"password\": \"Admin@1234\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "GET /api/auth/me — No Token (expect 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/auth/me"
+          }
+        },
+
+        {
+          "name": "GET /api/auth/me — With Customer Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has id', () => pm.expect(body.user.id).to.be.a('number'));",
+                  "pm.test('Has email', () => pm.expect(body.user.email).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+            "url": "{{base_url}}/api/auth/me"
+          }
+        }
+
+      ]
+    },
+
+    {
+      "name": "Menu",
+      "item": [
+
+        {
+          "name": "GET /api/menu — Public Browse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has items array', () => pm.expect(body.items).to.be.an('array'));",
+                  "pm.test('Items count > 0', () => pm.expect(body.items.length).to.be.above(0));",
+                  "const item = body.items[0];",
+                  "pm.test('Item has id', () => pm.expect(item.id).to.be.a('number'));",
+                  "pm.test('Item has name', () => pm.expect(item.name).to.be.a('string'));",
+                  "pm.test('Item has base_price', () => pm.expect(item.base_price).to.exist);",
+                  "pm.environment.set('test_menu_item_id', item.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/menu"
+          }
+        },
+
+        {
+          "name": "POST /api/admin/menu — Create Item (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has item id', () => pm.expect(body.item.id).to.be.a('number'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": "{{base_url}}/api/admin/menu",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"M12 Test Cake\",\n  \"description\": \"Created by M12 Postman test\",\n  \"base_price\": 1500,\n  \"category\": \"Birthday\",\n  \"is_available\": true\n}"
+            }
+          }
+        },
+
+        {
+          "name": "POST /api/admin/menu — Admin Route as Customer (expect 403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}" }
+            ],
+            "url": "{{base_url}}/api/admin/menu",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Unauthorised Cake\",\n  \"base_price\": 1000\n}"
+            }
+          }
+        }
+
+      ]
+    },
+
+    {
+      "name": "Orders",
+      "item": [
+
+        {
+          "name": "POST /api/orders — Valid Order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201', () => pm.response.to.have.status(201));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has order id', () => pm.expect(body.order.id).to.be.a('number'));",
+                  "pm.test('Has order_reference', () => pm.expect(body.order.order_reference).to.match(/^IC-\\d{8}-\\d{4}$/));",
+                  "pm.test('Status is Pending', () => pm.expect(body.order.status).to.eql('Pending'));",
+                  "pm.test('Has qr_code_token', () => pm.expect(body.order.qr_code_token).to.be.a('string'));",
+                  "pm.environment.set('test_order_id', body.order.id);",
+                  "pm.environment.set('test_qr_token', body.order.qr_code_token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}" }
+            ],
+            "url": "{{base_url}}/api/orders",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delivery_address\": \"123 Test Lane, Kurunegala\",\n  \"delivery_date\": \"2026-12-25\",\n  \"special_instructions\": \"M12 Postman test order\",\n  \"items\": [\n    {\n      \"menu_item_id\": {{test_menu_item_id}},\n      \"quantity\": 1,\n      \"size\": \"Medium\",\n      \"flavour\": \"Chocolate\",\n      \"decoration\": \"Happy Birthday\"\n    }\n  ]\n}"
+            }
+          }
+        },
+
+        {
+          "name": "POST /api/orders — Past Delivery Date (expect 422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 422', () => pm.response.to.have.status(422));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}" }
+            ],
+            "url": "{{base_url}}/api/orders",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"delivery_address\": \"123 Test Lane\",\n  \"delivery_date\": \"2020-01-01\",\n  \"items\": [\n    { \"menu_item_id\": {{test_menu_item_id}}, \"quantity\": 1 }\n  ]\n}"
+            }
+          }
+        },
+
+        {
+          "name": "GET /api/orders/my-orders — Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has orders array', () => pm.expect(body.orders).to.be.an('array'));",
+                  "pm.test('At least 1 order', () => pm.expect(body.orders.length).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+            "url": "{{base_url}}/api/orders/my-orders"
+          }
+        },
+
+        {
+          "name": "GET /api/orders/:id — Customer Order Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has order', () => pm.expect(body.order).to.be.an('object'));",
+                  "pm.test('Has items array', () => pm.expect(body.order.items).to.be.an('array'));",
+                  "pm.test('Has status_history', () => pm.expect(body.order.status_history).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+            "url": "{{base_url}}/api/orders/{{test_order_id}}"
+          }
+        },
+
+        {
+          "name": "GET /api/order/:token — Public QR Page (valid token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has order', () => pm.expect(body.order).to.be.an('object'));",
+                  "pm.test('Has order_reference', () => pm.expect(body.order.order_reference).to.be.a('string'));",
+                  "pm.test('Has customer_name', () => pm.expect(body.order.customer_name).to.be.a('string'));",
+                  "pm.test('Has delivery_address', () => pm.expect(body.order.delivery_address).to.be.a('string'));",
+                  "pm.test('Has items', () => pm.expect(body.order.items).to.be.an('array'));",
+                  "pm.test('Has status', () => pm.expect(body.order.status).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/order/{{test_qr_token}}"
+          }
+        },
+
+        {
+          "name": "GET /api/order/:token — Invalid Token (expect 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 404', () => pm.response.to.have.status(404));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has message', () => pm.expect(body.message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/order/INVALID_TOKEN_000000"
+          }
+        }
+
+      ]
+    },
+
+    {
+      "name": "Admin — Orders",
+      "item": [
+
+        {
+          "name": "GET /api/admin/orders — List All Orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has orders array', () => pm.expect(body.orders).to.be.an('array'));",
+                  "pm.test('Has total_count', () => pm.expect(body.total_count).to.be.a('number'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/admin/orders?page=1&limit=10",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+
+        {
+          "name": "GET /api/admin/orders/:id — Full Order Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has order', () => pm.expect(body.order).to.be.an('object'));",
+                  "pm.test('Has qr_code_data_url', () => pm.expect(body.order.qr_code_data_url).to.be.a('string'));",
+                  "pm.test('Has status_history', () => pm.expect(body.order.status_history).to.be.an('array'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/orders/{{test_order_id}}"
+          }
+        },
+
+        {
+          "name": "PATCH /api/admin/orders/:id/status — Pending → Confirmed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('New status is Confirmed', () => pm.expect(body.order.status).to.eql('Confirmed'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": "{{base_url}}/api/admin/orders/{{test_order_id}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Confirmed\" }"
+            }
+          }
+        },
+
+        {
+          "name": "PATCH /api/admin/orders/:id/status — Backward Transition (expect 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has error message', () => pm.expect(body.message).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "url": "{{base_url}}/api/admin/orders/{{test_order_id}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Pending\" }"
+            }
+          }
+        },
+
+        {
+          "name": "PATCH /api/admin/orders/:id/status — Customer Attempt (expect 403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}" }
+            ],
+            "url": "{{base_url}}/api/admin/orders/{{test_order_id}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"status\": \"Delivered\" }"
+            }
+          }
+        },
+
+        {
+          "name": "GET /api/admin/orders — Filter by Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('All returned orders match status', () => {",
+                  "  body.orders.forEach(o => pm.expect(o.status).to.eql('Confirmed'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": {
+              "raw": "{{base_url}}/api/admin/orders?status=Confirmed&page=1&limit=10",
+              "query": [
+                { "key": "status", "value": "Confirmed" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        }
+
+      ]
+    },
+
+    {
+      "name": "Customers",
+      "item": [
+
+        {
+          "name": "GET /api/customers/profile — Own Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has customer object', () => pm.expect(body.customer).to.be.an('object'));",
+                  "pm.test('Has name', () => pm.expect(body.customer.name).to.be.a('string'));",
+                  "pm.test('Has email', () => pm.expect(body.customer.email).to.be.a('string'));",
+                  "pm.test('No password field', () => pm.expect(body.customer.password).to.be.undefined);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+            "url": "{{base_url}}/api/customers/profile"
+          }
+        },
+
+        {
+          "name": "PUT /api/customers/profile — Update Name and Phone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Name updated', () => pm.expect(body.customer.name).to.eql('Updated M12 Name'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{customer_token}}" }
+            ],
+            "url": "{{base_url}}/api/customers/profile",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated M12 Name\",\n  \"phone\": \"0779999999\"\n}"
+            }
+          }
+        },
+
+        {
+          "name": "GET /api/admin/customers — Admin Customer List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has customers array', () => pm.expect(body.customers).to.be.an('array'));",
+                  "pm.test('Has total_count', () => pm.expect(body.total_count).to.be.a('number'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/customers"
+          }
+        },
+
+        {
+          "name": "GET /api/admin/customers/:id — Customer Detail with Order History",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has customer', () => pm.expect(body.customer).to.be.an('object'));",
+                  "pm.test('Has orders array', () => pm.expect(body.customer.orders).to.be.an('array'));",
+                  "pm.test('Has total_spent', () => pm.expect(body.customer.total_spent).to.exist);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/customers/{{test_customer_id}}"
+          }
+        }
+
+      ]
+    },
+
+    {
+      "name": "Reports",
+      "item": [
+
+        {
+          "name": "GET /api/admin/reports/summary — Dashboard Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has orders_today', () => pm.expect(body.orders_today).to.be.a('number'));",
+                  "pm.test('Has revenue_today', () => pm.expect(body.revenue_today).to.exist);",
+                  "pm.test('Has pending_count', () => pm.expect(body.pending_count).to.be.a('number'));",
+                  "pm.test('Has out_for_delivery_count', () => pm.expect(body.out_for_delivery_count).to.be.a('number'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/reports/summary"
+          }
+        },
+
+        {
+          "name": "GET /api/admin/reports/daily — 30-Day Revenue Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has daily array', () => pm.expect(body.daily).to.be.an('array'));",
+                  "if (body.daily.length > 0) {",
+                  "  const row = body.daily[0];",
+                  "  pm.test('Row has date', () => pm.expect(row.date).to.be.a('string'));",
+                  "  pm.test('Row has total_revenue', () => pm.expect(row.total_revenue).to.exist);",
+                  "  pm.test('Row has order_count', () => pm.expect(row.order_count).to.be.a('number'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/reports/daily"
+          }
+        },
+
+        {
+          "name": "GET /api/admin/reports/best-sellers — Top Menu Items",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test('Has best_sellers array', () => pm.expect(body.best_sellers).to.be.an('array'));",
+                  "if (body.best_sellers.length > 0) {",
+                  "  const item = body.best_sellers[0];",
+                  "  pm.test('Has menu_item_name', () => pm.expect(item.menu_item_name).to.be.a('string'));",
+                  "  pm.test('Has total_quantity', () => pm.expect(item.total_quantity).to.be.a('number'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": "{{base_url}}/api/admin/reports/best-sellers"
+          }
+        },
+
+        {
+          "name": "GET /api/admin/reports/summary — No Token (expect 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/admin/reports/summary"
+          }
+        }
+
+      ]
+    }
+
+  ]
+}

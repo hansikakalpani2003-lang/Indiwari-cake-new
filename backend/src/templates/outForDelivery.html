@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Order Is On the Way — Indiwari Cake</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #fdf2f8;
+      color: #1f2937;
+      padding: 24px 16px;
+    }
+    .wrapper {
+      max-width: 580px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .header {
+      background: linear-gradient(135deg, #be185d 0%, #9d174d 100%);
+      padding: 36px 32px;
+      text-align: center;
+    }
+    .header h1 { color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .header p  { color: #fce7f3; font-size: 14px; margin-top: 4px; }
+    .status-banner {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 16px 24px;
+      margin: 24px 32px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .status-banner .emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+    .status-banner h2 { font-size: 20px; font-weight: 700; color: #2563eb; }
+    .status-banner p  { font-size: 14px; color: #6b7280; margin-top: 4px; }
+    .body { padding: 24px 32px; }
+    .greeting { font-size: 16px; color: #374151; margin-bottom: 16px; }
+    .detail-card {
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 8px; padding: 20px; margin: 16px 0;
+    }
+    .detail-row {
+      display: flex; justify-content: space-between;
+      padding: 6px 0; font-size: 14px; border-bottom: 1px solid #f3f4f6;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { color: #6b7280; }
+    .detail-value { color: #111827; font-weight: 600; }
+    .tip-box {
+      background: #eff6ff; border-radius: 8px;
+      padding: 16px 20px; margin: 16px 0;
+      font-size: 14px; color: #374151; line-height: 1.6;
+    }
+    .btn-track {
+      display: block; width: fit-content;
+      margin: 24px auto; padding: 14px 32px;
+      background: #be185d; color: #ffffff;
+      text-decoration: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; text-align: center;
+    }
+    .note { font-size: 13px; color: #9ca3af; text-align: center; margin-top: 8px; }
+    .footer {
+      background: #f9fafb; border-top: 1px solid #e5e7eb;
+      padding: 20px 32px; text-align: center;
+    }
+    .footer p { font-size: 12px; color: #9ca3af; line-height: 1.6; }
+    .footer a { color: #be185d; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <div class="header">
+      <h1>🎂 Indiwari Cake</h1>
+      <p>Handcrafted cakes for every celebration</p>
+    </div>
+
+    <div class="status-banner">
+      <span class="emoji">🚚</span>
+      <h2>Your Order Is On the Way!</h2>
+      <p>Your cake has been collected and is heading to you now.</p>
+    </div>
+
+    <div class="body">
+
+      <p class="greeting">Hi <strong>{CUSTOMER_NAME}</strong>,</p>
+
+      <p style="font-size:15px; color:#374151; line-height:1.6; margin-bottom:16px;">
+        Your beautifully crafted cake is now <strong>out for delivery</strong>! 🚚
+        Our delivery team is on the way to your address. Please make sure someone
+        is available to receive the order.
+      </p>
+
+      <div class="detail-card">
+        <div class="detail-row">
+          <span class="detail-label">Order Reference</span>
+          <span class="detail-value">{ORDER_REF}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Order Status</span>
+          <span class="detail-value" style="color:#2563eb;">🚚 Out for Delivery</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Delivery Date</span>
+          <span class="detail-value">{DELIVERY_DATE}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Total Amount</span>
+          <span class="detail-value">{TOTAL_AMOUNT}</span>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        💡 <strong>Tip:</strong> Payment is <strong>cash on delivery</strong>.
+        Please have the exact amount ready — <strong>{TOTAL_AMOUNT}</strong> — for a smooth handover.
+      </div>
+
+      <a href="{TRACKING_LINK}" class="btn-track">Track My Order</a>
+      <p class="note">Or copy this link: <a href="{TRACKING_LINK}" style="color:#be185d;">{TRACKING_LINK}</a></p>
+
+    </div>
+
+    <div class="footer">
+      <p>
+        © {YEAR} Indiwari Cake. All rights reserved.<br />
+        <a href="mailto:support@indiwaricake.lk">support@indiwaricake.lk</a>
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,35 +1,39 @@
+
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000, // 15 second timeout
 });
 
-// ─── Request Interceptor ──────────────────────────────────────
-// Attach Authorization header from sessionStorage (set up in M3 AuthContext)
+// ─── Request Interceptor ────────────────────────────────────────────────────
+// Attach the JWT token from sessionStorage before every request.
+
 api.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem('indiwari_token');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ─── Response Interceptor ─────────────────────────────────────
-// On 401 (token expired/invalid) — clear session and redirect to login
+// ─── Response Interceptor ───────────────────────────────────────────────────
+// If the server returns 401 (token expired/invalid), clear session and redirect.
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response && error.response.status === 401) {
+      // Clear stored session data
       sessionStorage.removeItem('indiwari_token');
       sessionStorage.removeItem('indiwari_user');
-      // Redirect to login if not already there
+
+      // Redirect to login, but only if not already there
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }

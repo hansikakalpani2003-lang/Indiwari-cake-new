@@ -4,7 +4,6 @@
  * * Composition: Navbar → HeroSection → FeaturesSection → MenuPreview 
  * → HowItWorks → Footer 
  */
-import React from 'react';
 import Navbar          from '../components/common/Navbar';
 import Footer           from '../components/common/Footer';
 import HeroSection      from '../components/landing/HeroSection';
