@@ -8,6 +8,7 @@ const adminController  = require('../controllers/adminController');
 const reportController = require('../controllers/reportController');
 const menuController   = require('../controllers/menuController');
 const qrController     = require('../controllers/qrController');
+const deliveryPersonController = require('../controllers/deliveryPersonController');
 const upload           = require('../middleware/uploadMiddleware');
 
 router.use(verifyToken, requireAdmin);
@@ -29,5 +30,10 @@ router.patch ('/orders/:id/regenerate-qr', qrController.regenerateQR);
 
 router.get('/customers',              adminController.getAllCustomers);
 router.get('/customers/:id',          adminController.getCustomerDetail);
+
+router.get   ('/delivery-persons',      deliveryPersonController.getAll);
+router.post  ('/delivery-persons',      deliveryPersonController.create);
+router.put   ('/delivery-persons/:id',  deliveryPersonController.update);
+router.delete('/delivery-persons/:id',  deliveryPersonController.remove);
 
 module.exports = router;

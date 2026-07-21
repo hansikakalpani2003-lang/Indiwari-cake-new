@@ -1,3 +1,4 @@
+//backend/app.js
 'use strict';
 
 require('dotenv').config({ quiet: true });
@@ -13,6 +14,7 @@ const adminRoutes    = require('./src/routes/adminRoutes');
 const orderRoutes    = require('./src/routes/orderRoutes');    // ✅
 const customerRoutes = require('./src/routes/customerRoutes'); // ✅
 const qrRoutes       = require('./src/routes/qrRoutes');       // ✅ public QR order display (Module 6)
+const deliveryRoutes = require('./src/routes/deliveryRoutes');
 
 const app = express();
 
@@ -31,6 +33,7 @@ app.use('/api/menu',      menuRoutes);
 app.use('/api/admin',     adminRoutes);
 app.use('/api/orders',    orderRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/delivery',   deliveryRoutes);
 
 // Public, unauthenticated QR order lookup — GET /order/:token
 // (kept outside /api so a bare QR-code URL works: http://host/order/<token>)

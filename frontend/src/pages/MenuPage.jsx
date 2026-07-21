@@ -10,6 +10,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import MenuGrid from '../components/menu/MenuGrid';
+import logo from "../assets/logo.png";
 
 const MenuPage = () => {
   const { cartCount, cartTotal } = useCart();
@@ -24,12 +25,18 @@ const MenuPage = () => {
       {/* Top bar */}
       <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-40 border-b border-pink-100">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="font-serif text-xl font-bold text-pink-700 tracking-tight">
-            Indiwari Cake
-          </Link>
+
+         <Link to="/" className="flex items-center">
+  <img
+    src={logo}
+    alt="Indiwari Cake"
+    className="h-14 w-auto object-contain"
+  />
+</Link>
+
           <nav className="flex items-center gap-3">
             <Link to="/dashboard" className="text-sm text-gray-600 hover:text-pink-600 transition-colors">
-              Dashboard
+          ← Dashboard
             </Link>
             {cartCount > 0 && (
               <button

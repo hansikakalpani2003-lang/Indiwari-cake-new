@@ -179,9 +179,12 @@ const getAllOrders = asyncWrapper(async (req, res) => {
        o.created_at,
        u.id   AS customer_id,
        u.name AS customer_name,
-       u.email AS customer_email
+       u.email AS customer_email,
+       dp.name AS delivery_person_name,
+       dp.status AS delivery_person_status
      FROM orders o
      JOIN users u ON o.customer_id = u.id
+     LEFT JOIN delivery_persons dp ON dp.id = o.delivery_person_id
      ${whereClause}
      ORDER BY o.created_at DESC
      LIMIT ? OFFSET ?`,
@@ -215,12 +218,21 @@ const getAdminOrderDetail = asyncWrapper(async (req, res) => {
        o.qr_code_token,
        o.qr_code_data_url,
        o.created_at,
+       o.accepted_at,
+       o.delivered_at,
        u.id    AS customer_id,
        u.name  AS customer_name,
        u.email AS customer_email,
-       u.phone AS customer_phone
+       u.phone AS customer_phone,
+       dp.id AS delivery_person_id,
+       dp.name AS delivery_person_name,
+       dp.email AS delivery_person_email,
+       dp.phone AS delivery_person_phone,
+       dp.vehicle_type AS delivery_vehicle_type,
+       dp.vehicle_number AS delivery_vehicle_number
      FROM orders o
      JOIN users u ON o.customer_id = u.id
+     LEFT JOIN delivery_persons dp ON dp.id = o.delivery_person_id
      WHERE o.id = ?`,
     [orderId]
   );
@@ -253,15 +265,16 @@ const getAdminOrderDetail = asyncWrapper(async (req, res) => {
        h.old_status,
        h.new_status,
        h.changed_at,
-       u.name AS changed_by_name
+       COALESCE(u.name, dp.name, 'System') AS changed_by_name
      FROM order_status_history h
      LEFT JOIN users u ON h.changed_by = u.id
+     LEFT JOIN delivery_persons dp ON h.changed_by_delivery_person_id = dp.id
      WHERE h.order_id = ?
      ORDER BY h.changed_at ASC`,
     [orderId]
   );
 
-  res.json({ ...order, items, statusHistory });
+  res.json({ ...order, items, status_history: statusHistory });
 });
 
 module.exports = {

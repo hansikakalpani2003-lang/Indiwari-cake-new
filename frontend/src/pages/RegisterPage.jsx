@@ -1,34 +1,23 @@
 /**
  * RegisterPage.jsx
- * Customer registration form page.
- *
- * FIXED:
- *  - Password minimum changed from 6 → 8 characters to match
- *    the backend authValidator (isLength({ min: 8 })).
- *  - express-validator field error mapping fixed:
- *    Was destructuring { field, message } — express-validator actually
- *    returns { param, msg } (v6) or { path, msg } (v7+).
- *    Now handles BOTH versions safely.
- *  - Added fallback: if no field errors match known fields, shows
- *    the raw message as a serverError so nothing is silently swallowed.
+ * Customer registration page — styled to match DeliveryLoginPage.
  */
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { register, isAuthenticated } = useAuth();
 
-  // If already logged in, redirect to dashboard
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
 
-  // Form state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -38,20 +27,28 @@ const RegisterPage = () => {
     address: '',
   });
 
-  // UI state
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+      setFormData((prev) => ({ ...prev, phone: digitsOnly }));
+      if (errors.phone) {
+        setErrors((prev) => ({ ...prev, phone: '' }));
+      }
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  // Client-side validation — must match backend authValidator rules
   const validate = () => {
     const newErrors = {};
 
@@ -73,6 +70,10 @@ const RegisterPage = () => {
       newErrors.confirmPassword = 'Please confirm your password.';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match.';
+    }
+
+    if (formData.phone && formData.phone.length !== 10) {
+      newErrors.phone = 'Phone number must be 10 digits.';
     }
 
     return newErrors;
@@ -100,9 +101,6 @@ const RegisterPage = () => {
         const fieldErrors = {};
 
         response.errors.forEach((error) => {
-          // ✅ FIXED: express-validator v6 uses { param, msg }
-          //           express-validator v7 uses { path,  msg }
-          //           Old code was using { field, message } — both undefined!
           const fieldKey = error.path ?? error.param ?? error.field ?? null;
           const fieldMsg = error.msg ?? error.message ?? 'Invalid value.';
 
@@ -114,7 +112,6 @@ const RegisterPage = () => {
         if (Object.keys(fieldErrors).length > 0) {
           setErrors(fieldErrors);
         } else {
-          // Errors exist but no field keys matched — show raw list as server error
           const messages = response.errors
             .map((e) => e.msg ?? e.message ?? '')
             .filter(Boolean)
@@ -122,109 +119,100 @@ const RegisterPage = () => {
           setServerError(messages || 'Registration failed. Please try again.');
         }
       } else {
-        setServerError(
-          response?.message || 'Registration failed. Please try again.'
-        );
+        setServerError(response?.message || 'Registration failed. Please try again.');
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // Don't render the form while the redirect is pending
   if (isAuthenticated) return null;
 
   return (
-    <div className="min-h-screen bg-pink-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-md p-8">
-
-        {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-pink-700">Create an Account</h1>
-          <p className="text-gray-500 mt-1 text-sm">Join Indiwari Cake and order your perfect cake</p>
+    <div className="min-h-screen bg-[#FFF8F3] flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md bg-white border border-pink-100 rounded-3xl shadow-xl p-8">
+        <div className="text-center mb-7">
+          <img src={logo} alt="Indiwari Cake" className="h-20 mx-auto object-contain" />
+          <h1 className="text-2xl font-bold text-gray-900 mt-3">Create an Account</h1>
+          <p className="text-sm text-gray-500 mt-1">Join Indiwari Cake and order your perfect cake</p>
         </div>
 
-        {/* Server Error Alert */}
         {serverError && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {serverError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} noValidate>
-
-          {/* Full Name */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="name">
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
               id="name" name="name" type="text"
               value={formData.name} onChange={handleChange}
               placeholder="Kasun Perera"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.name ? 'border-red-400' : 'border-gray-300'}`}
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.name ? 'border-red-400' : 'border-gray-300'}`}
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
 
-          {/* Email */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="email">
               Email Address <span className="text-red-500">*</span>
             </label>
             <input
               id="email" name="email" type="email"
               value={formData.email} onChange={handleChange}
               placeholder="kasun@example.com"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.email ? 'border-red-400' : 'border-gray-300'}`}
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.email ? 'border-red-400' : 'border-gray-300'}`}
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
 
-          {/* Password */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="password">
               Password <span className="text-red-500">*</span>
             </label>
             <input
               id="password" name="password" type="password"
               value={formData.password} onChange={handleChange}
               placeholder="Minimum 8 characters"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.password ? 'border-red-400' : 'border-gray-300'}`}
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.password ? 'border-red-400' : 'border-gray-300'}`}
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
 
-          {/* Confirm Password */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirmPassword">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="confirmPassword">
               Confirm Password <span className="text-red-500">*</span>
             </label>
             <input
               id="confirmPassword" name="confirmPassword" type="password"
               value={formData.confirmPassword} onChange={handleChange}
               placeholder="Re-enter your password"
-              className={`w-full px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.confirmPassword ? 'border-red-400' : 'border-gray-300'}`}
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.confirmPassword ? 'border-red-400' : 'border-gray-300'}`}
             />
             {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
           </div>
 
-          {/* Phone Number (optional) */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phone">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="phone">
               Phone Number <span className="text-gray-400 font-normal">(optional)</span>
             </label>
             <input
               id="phone" name="phone" type="tel"
+              inputMode="numeric"
+              maxLength={10}
               value={formData.phone} onChange={handleChange}
-              placeholder="+94 77 123 4567"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+              placeholder="0771234567"
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 ${errors.phone ? 'border-red-400' : 'border-gray-300'}`}
             />
+            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
           </div>
 
-          {/* Delivery Address (optional) */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="address">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="address">
               Delivery Address <span className="text-gray-400 font-normal">(optional)</span>
             </label>
             <textarea
@@ -232,24 +220,26 @@ const RegisterPage = () => {
               value={formData.address} onChange={handleChange}
               rows={2}
               placeholder="No. 12, Main Street, Kurunegala"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit" disabled={loading}
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2.5 rounded-lg transition-colors duration-200 disabled:opacity-60 text-sm disabled:cursor-not-allowed"
+            className="w-full rounded-xl bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
-        {/* Login redirect link */}
         <p className="text-center text-sm text-gray-500 mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-pink-600 hover:underline font-medium">Log in here</Link>
+          <Link to="/login" className="text-pink-600 font-semibold hover:underline">Log in here</Link>
         </p>
+
+        <div className="mt-4 text-center text-sm">
+          <Link to="/" className="text-pink-600 font-semibold hover:underline">← Back to Home</Link>
+        </div>
       </div>
     </div>
   );

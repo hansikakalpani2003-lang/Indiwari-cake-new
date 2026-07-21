@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
 
-const SIZES = ['500g', '1kg', '2kg', 'Slice'];
-const FLAVOURS = [
-  'Vanilla', 'Chocolate', 'Strawberry', 'Red Velvet',
-  'Lemon', 'Caramel', 'Coconut', 'Other',
-];
+const SIZES = ['500g', '1kg', '2kg'];
 
 const formatLKR = (amount) =>
   `Rs. ${parseFloat(amount).toLocaleString('en-LK', { minimumFractionDigits: 2 })}`;
@@ -17,7 +13,6 @@ const SIZE_MULTIPLIERS = {
   '500g': 0.55,
   '1kg':  1,
   '2kg':  1.9,
-  'Slice': 0.15,
 };
 
 const CustomisationModal = ({ item, onClose }) => {
@@ -25,8 +20,6 @@ const CustomisationModal = ({ item, onClose }) => {
 
   const [quantity, setQuantity]         = useState(1);
   const [size, setSize]                 = useState('1kg');
-  const [flavour, setFlavour]           = useState('Vanilla');
-  const [customFlavour, setCustomFlavour] = useState('');
   const [decorationNote, setDecorationNote] = useState('');
   const [added, setAdded]               = useState(false);
 
@@ -34,8 +27,6 @@ const CustomisationModal = ({ item, onClose }) => {
   const subtotal  = unitPrice * quantity;
 
   const handleAdd = () => {
-    const finalFlavour = flavour === 'Other' ? (customFlavour.trim() || 'Other') : flavour;
-
     addItem({
       menu_item_id:    item.id,
       name:            item.name,
@@ -43,7 +34,6 @@ const CustomisationModal = ({ item, onClose }) => {
       unit_price:      unitPrice,
       quantity,
       size,
-      flavour:         finalFlavour,
       decoration_note: decorationNote.trim(),
     });
 
@@ -98,7 +88,7 @@ const CustomisationModal = ({ item, onClose }) => {
           {/* Size */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Size</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {SIZES.map(s => (
                 <button
                   key={s}
@@ -113,30 +103,6 @@ const CustomisationModal = ({ item, onClose }) => {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Flavour */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Flavour</label>
-            <select
-              value={flavour}
-              onChange={e => setFlavour(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
-            >
-              {FLAVOURS.map(f => (
-                <option key={f} value={f}>{f}</option>
-              ))}
-            </select>
-            {flavour === 'Other' && (
-              <input
-                type="text"
-                placeholder="Describe your flavour..."
-                value={customFlavour}
-                onChange={e => setCustomFlavour(e.target.value)}
-                maxLength={80}
-                className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
-              />
-            )}
           </div>
 
           {/* Decoration Note */}

@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from "../../assets/logo.png";
 
 const Navbar = () => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
@@ -41,12 +42,16 @@ const Navbar = () => {
 
           {/* Logo */}
           <Link
-            to="/"
-            className="font-serif text-xl font-bold text-pink-700 tracking-tight flex items-center gap-1"
-            onClick={closeMobile}
-          >
-             Indiwari Cake
-          </Link>
+    to="/"
+  className="flex items-center"
+  onClick={closeMobile}
+>
+  <img
+    src={logo}
+    alt="Indiwari Cake"
+    className="h-14 w-auto object-contain"
+  />
+</Link>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6">
@@ -55,7 +60,9 @@ const Navbar = () => {
 
             {!isAuthenticated && (
               <>
-                <Link to="/login" className={linkClasses('/login')}>Login</Link>
+                <Link to="/login" className={linkClasses('/login')}>Customer </Link>
+                <Link to="/delivery/login" className={linkClasses('/delivery/login')}>Delivery </Link>
+                <Link to="/login" className={linkClasses('/login')}>Admin </Link>
                 <Link
                   to="/register"
                   className="bg-pink-600 hover:bg-pink-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
@@ -112,7 +119,9 @@ const Navbar = () => {
 
             {!isAuthenticated && (
               <>
-                <Link to="/login" className={linkClasses('/login')} onClick={closeMobile}>Login</Link>
+                <Link to="/login" className={linkClasses('/login')} onClick={closeMobile}>Customer Login</Link>
+                <Link to="/delivery/login" className={linkClasses('/delivery/login')} onClick={closeMobile}>Delivery Login</Link>
+                <Link to="/login" className={linkClasses('/login')} onClick={closeMobile}>Admin Login</Link>
                 <Link
                   to="/register"
                   onClick={closeMobile}

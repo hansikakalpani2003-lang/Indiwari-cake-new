@@ -128,6 +128,12 @@ export default function AdminDashboard() {
             >
               Manage Menu
             </Link>
+            <Link
+              to="/admin/delivery-persons"
+              className="px-5 py-2.5 rounded-xl border-2 border-pink-600 text-pink-600 text-sm font-semibold hover:bg-pink-600 hover:text-white transition-colors"
+            >
+              Delivery Team
+            </Link>
           </div>
         </div>
 

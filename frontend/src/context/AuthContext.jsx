@@ -88,14 +88,14 @@ export const AuthProvider = ({ children }) => {
 
   /**
    * logout()
-   * Clears auth state and sessionStorage, then redirects to /login.
+   * Clears auth state and sessionStorage, then redirects to Home.
    */
   const logout = () => {
     setToken(null);
     setUser(null);
     sessionStorage.removeItem('indiwari_token');
     sessionStorage.removeItem('indiwari_user');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   const contextValue = {

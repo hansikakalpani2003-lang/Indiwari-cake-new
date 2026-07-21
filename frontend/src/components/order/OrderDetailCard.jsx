@@ -57,6 +57,15 @@ const OrderDetailCard = ({ order }) => {
         </div>
       </div>
 
+      {order.delivery_person_name && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <p className="text-xs font-medium text-blue-600 uppercase tracking-wider mb-1">🚚 Assigned Delivery Person</p>
+          <p className="text-sm font-semibold text-blue-900">{order.delivery_person_name}</p>
+          <p className="text-sm text-blue-700 mt-1">{order.delivery_person_phone || 'No phone number'}</p>
+          <p className="text-xs text-blue-600 mt-1">{[order.delivery_vehicle_type, order.delivery_vehicle_number].filter(Boolean).join(' · ')}</p>
+        </div>
+      )}
+
       {/* ── Special Instructions ─────────────────────────────────────────── */}
       {order.special_instructions && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">

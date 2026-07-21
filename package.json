@@ -1,9 +1,18 @@
 {
-  "dependencies": {
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "helmet": "^8.2.0",
-    "morgan": "^1.11.0"
+  "name": "indiwari-cake-complete",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace indiwari-cake-backend\" \"npm run dev --workspace frontend\"",
+    "start": "npm run start --workspace indiwari-cake-backend",
+    "build": "npm run build --workspace frontend",
+    "check": "npm run build --workspace frontend && node --check backend/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

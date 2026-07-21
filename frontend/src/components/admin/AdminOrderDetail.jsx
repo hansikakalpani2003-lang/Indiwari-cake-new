@@ -93,6 +93,23 @@ export default function AdminOrderDetail({ orderId, onClose, onStatusUpdated }) 
               <hr className="border-gray-100" />
 
               <section>
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Delivery Assignment</h3>
+                {order.delivery_person_id ? (
+                  <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm">
+                    <p className="font-bold text-blue-900">{order.delivery_person_name}</p>
+                    <p className="text-blue-700 mt-1">{order.delivery_person_phone} · {order.delivery_person_email}</p>
+                    <p className="text-blue-700">{order.delivery_vehicle_type}{order.delivery_vehicle_number ? ` · ${order.delivery_vehicle_number}` : ''}</p>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
+                    No delivery person has accepted this order yet.
+                  </div>
+                )}
+              </section>
+
+              <hr className="border-gray-100" />
+
+              <section>
                 <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Items</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">

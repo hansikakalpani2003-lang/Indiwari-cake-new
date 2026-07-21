@@ -126,6 +126,9 @@ function buildReplacements(orderData) {
     TOTAL_AMOUNT:   formatCurrency(orderData.total_amount),
     TRACKING_LINK:  trackingLink,
     CLIENT_URL:     process.env.CLIENT_URL,
+    DELIVERY_PERSON_NAME: orderData.delivery_person_name || 'Indiwari Delivery Team',
+    DELIVERY_PERSON_PHONE: orderData.delivery_person_phone || 'Not available',
+    DELIVERY_VEHICLE: [orderData.vehicle_type, orderData.vehicle_number].filter(Boolean).join(' - ') || 'Delivery vehicle',
     YEAR:           new Date().getFullYear().toString(),
   };
 }

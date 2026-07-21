@@ -15,7 +15,7 @@ const HeroSection = () => {
 
       {/* Full-bleed background image */}
       <img
-        src="https://img.magnific.com/free-photo/delicious-cake-arrangement-top-view_23-2148933607.jpg?semt=ais_hybrid&w=740&q=80"
+        src="https://thumbs.dreamstime.com/b/soft-blurred-bakery-shop-background-creates-cozy-atmosphere-sweet-treats-soft-blurred-bakery-shop-background-creates-cozy-381989942.jpg"
         alt="Indiwari Cake"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />

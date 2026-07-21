@@ -128,3 +128,15 @@ CREATE INDEX idx_orders_status       ON orders(status);
 CREATE INDEX idx_orders_delivery_date ON orders(delivery_date);
 CREATE INDEX idx_order_items_order   ON order_items(order_id);
 CREATE INDEX idx_status_history_order ON order_status_history(order_id);
+
+CREATE TABLE IF NOT EXISTS delivery_persons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    vehicle_type VARCHAR(50) NOT NULL,
+    status ENUM('Active','Inactive') DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
+);

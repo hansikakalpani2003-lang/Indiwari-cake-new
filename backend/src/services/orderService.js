@@ -93,7 +93,7 @@ async function getCustomerOrders(customerId) {
 // ── Get Order By ID (Customer) ────────────────────────────────────────────────
 async function getOrderById(orderId, customerId) {
   const [orderRows] = await db.query(
-    `SELECT o.id, o.order_reference, o.status, o.total_amount, o.delivery_date, o.delivery_address, o.special_instructions, o.qr_code_token, o.payment_method, o.created_at FROM orders o WHERE o.id = ? AND o.customer_id = ?`,
+    `SELECT o.id, o.order_reference, o.status, o.total_amount, o.delivery_date, o.delivery_address, o.special_instructions, o.qr_code_token, o.qr_code_data_url, o.payment_method, o.created_at, o.accepted_at, o.delivered_at, dp.name AS delivery_person_name, dp.phone AS delivery_person_phone, dp.vehicle_type AS delivery_vehicle_type, dp.vehicle_number AS delivery_vehicle_number FROM orders o LEFT JOIN delivery_persons dp ON dp.id = o.delivery_person_id WHERE o.id = ? AND o.customer_id = ?`,
     [orderId, customerId]
   );
   if (orderRows.length === 0) return null;
@@ -131,10 +131,16 @@ async function getOrderByIdAdmin(orderId) {
 
 // ── Update Order Status ───────────────────────────────────────────────────────
 async function updateOrderStatus(orderId, newStatus, adminId) {
-  const validStatuses = ['Pending', 'Confirmed', 'Being Prepared', 'Out for Delivery', 'Delivered'];
-  if (!validStatuses.includes(newStatus)) throw { statusCode: 400, message: `Invalid status: ${newStatus}` };
+  const validStatuses = ['Pending', 'Confirmed', 'Being Prepared'];
+  if (!validStatuses.includes(newStatus)) {
+    throw { statusCode: 400, message: 'Out for Delivery and Delivered are updated from the delivery person dashboard.' };
+  }
   const [[order]] = await db.query('SELECT id, status FROM orders WHERE id = ?', [orderId]);
   if (!order) throw { statusCode: 404, message: `Order ${orderId} not found.` };
+  const allowedNext = { Pending: 'Confirmed', Confirmed: 'Being Prepared' };
+  if (allowedNext[order.status] !== newStatus) {
+    throw { statusCode: 409, message: `Order can only move from ${order.status} to ${allowedNext[order.status] || 'the delivery workflow'}.` };
+  }
   await db.query('UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?', [newStatus, orderId]);
   await db.query('INSERT INTO order_status_history (order_id, old_status, new_status, changed_by) VALUES (?, ?, ?, ?)', [orderId, order.status, newStatus, adminId]);
 

@@ -56,9 +56,14 @@ const publicOrderPage = asyncWrapper(async (req, res) => {
        o.created_at,
        o.updated_at,
        u.name  AS customer_name,
-       u.phone AS customer_phone
+       u.phone AS customer_phone,
+       dp.name AS delivery_person_name,
+       dp.phone AS delivery_person_phone,
+       dp.vehicle_type AS delivery_vehicle_type,
+       dp.vehicle_number AS delivery_vehicle_number
      FROM orders o
      JOIN users u ON u.id = o.customer_id
+     LEFT JOIN delivery_persons dp ON dp.id = o.delivery_person_id
      WHERE o.qr_code_token = ?`,
     [token]
   );

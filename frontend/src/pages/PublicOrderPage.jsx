@@ -197,6 +197,7 @@ export default function PublicOrderPage() {
     order_reference, status, customer_name, customer_phone,
     delivery_address, delivery_date, special_instructions,
     payment_method, total_amount, created_at, items, status_history,
+    delivery_person_name, delivery_person_phone, delivery_vehicle_type, delivery_vehicle_number,
   } = order;
 
   const statusConfig = STATUS_CONFIG[status] || { desc: '' };
@@ -235,6 +236,13 @@ export default function PublicOrderPage() {
             <InfoRow label="Payment"       value={payment_method === 'cash_on_delivery' ? 'Cash on Delivery' : payment_method} />
             <InfoRow label="Order Placed"  value={formatDateTime(created_at)} className="sm:col-span-2" />
             <InfoRow label="Deliver To"    value={delivery_address} className="sm:col-span-2" />
+            {delivery_person_name && (
+              <>
+                <InfoRow label="Delivery Person" value={delivery_person_name} />
+                <InfoRow label="Delivery Contact" value={delivery_person_phone || '—'} />
+                <InfoRow label="Delivery Vehicle" value={[delivery_vehicle_type, delivery_vehicle_number].filter(Boolean).join(' · ') || '—'} className="sm:col-span-2" />
+              </>
+            )}
             {special_instructions && (
               <InfoRow label="Special Instructions" value={special_instructions} className="sm:col-span-2" />
             )}
